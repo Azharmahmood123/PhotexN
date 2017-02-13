@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/keyboard"
+        android:icon="@drawable/keyboard_icon_s"
+        android:title="search"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/sticker"
+        android:icon="@drawable/sticker_s"
+        android:title="compose"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/background"
+        android:icon="@drawable/bg_icon_s"
+        android:title="compose"
+        app:showAsAction="always" />
+</menu>
