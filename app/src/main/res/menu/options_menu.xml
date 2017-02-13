@@ -11,9 +11,9 @@
         android:icon="@drawable/sticker_s"
         android:title="compose"
         app:showAsAction="always" />
-    <!--<item-->
-        <!--android:id="@+id/background"-->
-        <!--android:icon="@drawable/bg_icon_s"-->
-        <!--android:title="compose"-->
-        <!--app:showAsAction="always" />-->
+    <item
+        android:id="@+id/background"
+        android:icon="@drawable/bg_icon_s"
+        android:title="compose"
+        app:showAsAction="always" />
 </menu>
