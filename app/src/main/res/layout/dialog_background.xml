@@ -101,7 +101,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/ll_edvice"
+        android:id="@+id/ll_device"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/_10sdp"
