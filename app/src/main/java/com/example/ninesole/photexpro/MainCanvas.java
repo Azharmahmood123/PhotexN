@@ -8,6 +8,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -40,7 +41,9 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
 
 import adapters.ImageAdapter;
 import yuku.ambilwarna.AmbilWarnaDialog;
@@ -93,6 +96,14 @@ public class MainCanvas extends AppCompatActivity {
 
 
         }
+    }
+
+    public static Bitmap loadBitmapFromView(View v) {
+        Bitmap b = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        v.layout(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+        v.draw(c);
+        return b;
     }
 
     /////
@@ -151,6 +162,7 @@ public class MainCanvas extends AppCompatActivity {
 
         ca = new ClipArt(context);
         layBg.addView(ca);
+
         ca.setId(count++);
 
 
@@ -160,7 +172,7 @@ public class MainCanvas extends AppCompatActivity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 disableall();
-                Toast.makeText(context, "Selected Item Id : " + v.getId(), Toast.LENGTH_LONG).show();
+//                Toast.makeText(context, "Selected Item Id : " + v.getId(), Toast.LENGTH_LONG).show();
             }
         });
         sb_value.setProgress(125);
@@ -218,14 +230,52 @@ public class MainCanvas extends AppCompatActivity {
                 stickerDialog();
                 break;
             case R.id.background:
-                Toast.makeText(context, "Backgroung Dialog", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Background Dialog", Toast.LENGTH_SHORT).show();
                 backgroundDialog();
+                break;
+
+            case R.id.save:
+                disableall();
+                sb_value.setVisibility(View.GONE);
+                Bitmap snap = loadBitmapFromView(relativeLayout);
+                createImage(snap);
+                Toast.makeText(context, "save", Toast.LENGTH_SHORT).show();
                 break;
 
         }
         return true;
 
 
+    }
+
+    public void screenShot() {
+        Bitmap mbitmap = getBitmapOFRootView(imageView);
+        imageView.setImageBitmap(mbitmap);
+        createImage(mbitmap);
+    }
+
+    public Bitmap getBitmapOFRootView(View v) {
+        View rootview = v.getRootView();
+        rootview.setDrawingCacheEnabled(true);
+        Bitmap bitmap1 = rootview.getDrawingCache();
+        return bitmap1;
+    }
+
+    public void createImage(Bitmap bmp) {
+        Calendar c = Calendar.getInstance();
+        Log.i("Time", String.valueOf(c.getTime()));
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
+        File file = new File(Environment.getExternalStorageDirectory()
+                + "/_photex.jpg");
+        try {
+            file.createNewFile();
+            FileOutputStream outputStream = new FileOutputStream(file);
+            outputStream.write(bytes.toByteArray());
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void stickerDialog() {
@@ -238,9 +288,9 @@ public class MainCanvas extends AppCompatActivity {
         llFrame = (LinearLayout) dialog.findViewById(R.id.ll_frame);
         llSticker = (LinearLayout) dialog.findViewById(R.id.ll_sticker);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        ImageView dialogButton = (ImageView) dialog.findViewById(R.id.iv_close);
+        ImageView closeButton = (ImageView) dialog.findViewById(R.id.iv_close);
         // if button is clicked, close the custom dialog
-        dialogButton.setOnClickListener(new View.OnClickListener() {
+        closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
@@ -250,6 +300,7 @@ public class MainCanvas extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 GetImageFromGallery();
+                dialog.dismiss();
             }
         });
         llAddImage.setOnClickListener(new View.OnClickListener() {
@@ -292,10 +343,10 @@ public class MainCanvas extends AppCompatActivity {
         dialog.setContentView(R.layout.dialog_background);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        ImageView dialogButton = (ImageView) dialog.findViewById(R.id.iv_close);
+        ImageView closeButton = (ImageView) dialog.findViewById(R.id.iv_close);
         llPlain = (LinearLayout) dialog.findViewById(R.id.ll_plain);
         // if button is clicked, close the custom dialog
-        dialogButton.setOnClickListener(new View.OnClickListener() {
+        closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
@@ -304,8 +355,9 @@ public class MainCanvas extends AppCompatActivity {
         llPlain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                dialog.dismiss();
                 OpenColorPickerDialog(false);
+
             }
         });
         dialog.show();

@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/save"
+        android:icon="@drawable/save"
+        android:title="search"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/keyboard"
         android:icon="@drawable/keyboard_icon_s"
         android:title="search"

@@ -58,16 +58,17 @@
 
     <LinearLayout
         android:id="@+id/ln1"
-        android:layout_width="500dp"
+        android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_below="@+id/del"
         android:background="#27002b"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/horizontal_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
+
             android:background="#27002b" />
     </LinearLayout>
 
