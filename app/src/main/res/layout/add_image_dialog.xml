@@ -17,7 +17,7 @@
         android:layout_marginBottom="@dimen/_10sdp"
         android:gravity="center"
         android:text="Select Photo from"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:textSize="@dimen/_15sdp"
         android:textStyle="bold" />
 
@@ -52,7 +52,7 @@
                 android:layout_marginTop="@dimen/_10sdp"
                 android:gravity="center"
                 android:text="Gallery"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/white" />
 
 
         </LinearLayout>
@@ -78,7 +78,7 @@
                 android:layout_marginTop="@dimen/_10sdp"
                 android:gravity="center"
                 android:text="Camera"
-                android:textColor="@android:color/black" />
+                android:textColor="@android:color/white" />
         </LinearLayout>
     </LinearLayout>
 

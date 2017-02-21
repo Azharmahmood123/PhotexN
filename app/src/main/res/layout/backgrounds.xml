@@ -17,7 +17,7 @@
             android:layout_height="30dip"
             android:layout_alignParentRight="true"
             android:layout_marginRight="3dp"
-            android:src="@drawable/close" />
+            android:src="@drawable/tick" />
 
         <TextView
             android:id="@+id/text1"

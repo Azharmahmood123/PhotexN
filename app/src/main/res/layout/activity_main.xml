@@ -52,16 +52,18 @@
     <RelativeLayout
         android:id="@+id/seekbatlayout"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/_40sdp"
         android:layout_alignParentBottom="true"
         android:visibility="gone">
 
         <SeekBar
             android:id="@+id/sb_value"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_40sdp"
             android:layout_alignParentBottom="true"
-            android:max="200"
+            android:max="255"
+            android:maxHeight="@dimen/_80sdp"
+            android:minHeight="@dimen/_80sdp"
             android:progress="100" />
     </RelativeLayout>
 </RelativeLayout>

@@ -6,14 +6,17 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -69,7 +72,7 @@ public class MainCanvas extends AppCompatActivity {
     public int DefaultColor;
     public int position;
     Context context;
-    LinearLayout llGallery, llAddImage, llFrame, llSticker, llPlain;
+    LinearLayout llGallery, llAddImage, llFrame, llSticker, llPlain, llDevice;
     ImageView iv;
     /////
     RelativeLayout layBg;
@@ -81,6 +84,7 @@ public class MainCanvas extends AppCompatActivity {
     DisplayMetrics displayMetrics;
     int width, height;
     Dialog dialog;
+    boolean bg = false;
     //captured picture uri
     private Uri picUri;
 
@@ -175,12 +179,17 @@ public class MainCanvas extends AppCompatActivity {
 //                Toast.makeText(context, "Selected Item Id : " + v.getId(), Toast.LENGTH_LONG).show();
             }
         });
-        sb_value.setProgress(125);
+        sb_value.setProgress(255);
         sb_value.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                ClipArt.image.setColorFilter(setBrightness(progress));
+//                ClipArt.image.setColorFilter(setBrightness(progress));
+//                canvas.drawColor(Color.argb(alpha, red, green, blue));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    ClipArt.image.setImageAlpha(progress);
+                    Log.e("progress", progress + "");
+                }
 
             }
 
@@ -235,11 +244,26 @@ public class MainCanvas extends AppCompatActivity {
                 break;
 
             case R.id.save:
-                disableall();
-                sb_value.setVisibility(View.GONE);
-                Bitmap snap = loadBitmapFromView(relativeLayout);
-                createImage(snap);
-                Toast.makeText(context, "save", Toast.LENGTH_SHORT).show();
+                new AlertDialog.Builder(context)
+                        .setTitle("Save Post")
+                        .setMessage("Are you sure you want to save the current post")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                disableall();
+                                sb_value.setVisibility(View.GONE);
+                                Bitmap snap = loadBitmapFromView(relativeLayout);
+                                createImage(snap);
+                                Toast.makeText(context, "saved to storage", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .setIcon(R.drawable.save)
+                        .show();
+
                 break;
 
         }
@@ -263,16 +287,26 @@ public class MainCanvas extends AppCompatActivity {
 
     public void createImage(Bitmap bmp) {
         Calendar c = Calendar.getInstance();
-        Log.i("Time", String.valueOf(c.getTime()));
+        int seconds = c.get(Calendar.SECOND);
+        int min = c.get(Calendar.MINUTE);
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        String time = hour + ":" + min + ":" + seconds;
+        Log.i("Time", time);
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
-        File file = new File(Environment.getExternalStorageDirectory()
-                + "/_photex.jpg");
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        File photexSnaps = new File(Environment.getExternalStorageDirectory() + "/PhotexPro/");
+// have the object build the directory structure, if needed.
+        photexSnaps.mkdirs();
+        File file = new File(photexSnaps, "photex_" + time + ".jpg");
+//        File file = new File(Environment.getExternalStorageDirectory()
+//                + "/photex_" + time + ".jpg");
         try {
             file.createNewFile();
             FileOutputStream outputStream = new FileOutputStream(file);
             outputStream.write(bytes.toByteArray());
             outputStream.close();
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
+                    Uri.parse("file://" + photexSnaps)));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -280,7 +314,7 @@ public class MainCanvas extends AppCompatActivity {
 
     public void stickerDialog() {
         // custom dialog
-        final Dialog dialog = new Dialog(context);
+        final Dialog dialog = new Dialog(context, R.style.dialog_animate);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_sticker);
         llGallery = (LinearLayout) dialog.findViewById(R.id.ll_gallery);
@@ -299,20 +333,24 @@ public class MainCanvas extends AppCompatActivity {
         llGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GetImageFromGallery();
                 dialog.dismiss();
+                GetImageFromGallery();
+
             }
         });
         llAddImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addImageDialog();
                 dialog.dismiss();
+                bg = false;
+                addImageDialog();
+
             }
         });
         llFrame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog.dismiss();
                 showDialog(CATEGORY_ID);
                 imgbg.setBackgroundResource(0);
             }
@@ -338,13 +376,14 @@ public class MainCanvas extends AppCompatActivity {
 
     public void backgroundDialog() {
         // custom dialog
-        final Dialog dialog = new Dialog(context);
+        final Dialog dialog = new Dialog(context, R.style.dialog_animate);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_background);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         ImageView closeButton = (ImageView) dialog.findViewById(R.id.iv_close);
         llPlain = (LinearLayout) dialog.findViewById(R.id.ll_plain);
+        llDevice = (LinearLayout) dialog.findViewById(R.id.ll_device);
         // if button is clicked, close the custom dialog
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -358,6 +397,14 @@ public class MainCanvas extends AppCompatActivity {
                 dialog.dismiss();
                 OpenColorPickerDialog(false);
 
+            }
+        });
+        llDevice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bg = true;
+                dialog.dismiss();
+                addImageDialog();
             }
         });
         dialog.show();
@@ -446,12 +493,19 @@ public class MainCanvas extends AppCompatActivity {
 
                     bitmap = bundle.getParcelable("data");
 
-                    ClipArt.image.setVisibility(View.VISIBLE);
-                    ClipArt.imgring.setVisibility(View.VISIBLE);
-                    ClipArt.btndel.setVisibility(View.VISIBLE);
-                    ClipArt.btnrot.setVisibility(View.VISIBLE);
-                    ClipArt.btnscl.setVisibility(View.VISIBLE);
-                    ClipArt.image.setImageBitmap(bitmap);
+
+                    BitmapDrawable ob = new BitmapDrawable(getResources(), bitmap);
+                    if (bg) {
+                        relativeLayout.setBackgroundDrawable(ob);
+                    } else {
+                        ClipArt.image.setVisibility(View.VISIBLE);
+                        ClipArt.imgring.setVisibility(View.VISIBLE);
+                        ClipArt.btndel.setVisibility(View.VISIBLE);
+                        ClipArt.btnrot.setVisibility(View.VISIBLE);
+                        ClipArt.btnscl.setVisibility(View.VISIBLE);
+                        ClipArt.image.setImageBitmap(bitmap);
+                    }
+
                 }
             }
         }
@@ -557,6 +611,7 @@ public class MainCanvas extends AppCompatActivity {
             }
 
         }
+        sblayout.setVisibility(View.INVISIBLE);
 
     }
 
@@ -606,10 +661,10 @@ public class MainCanvas extends AppCompatActivity {
                         //     Toast.makeText(arg1.getContext(), "Position is "+arg2, 3000).show();
                     }
                 });
-                ImageView close = (ImageView) layout.findViewById(R.id.close);
+                ImageView tick = (ImageView) layout.findViewById(R.id.close);
                 imgbg = (ImageView) layout.findViewById(R.id.imgbg);
 
-                close.setOnClickListener(new View.OnClickListener() {
+                tick.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         if ((dialog.isShowing())) {
                             relativeLayout.setBackgroundResource((ImageAdapter.mThumbIds[position]));
