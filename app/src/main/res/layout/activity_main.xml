@@ -5,65 +5,75 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_main">
 
-    <ImageView
-        android:id="@+id/iv_main"
-        android:layout_width="@dimen/_250sdp"
-        android:layout_height="@dimen/_250sdp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:src="@drawable/s_ic"
-        android:visibility="gone" />
+    <!--<ImageView-->
+    <!--android:id="@+id/iv_main"-->
+    <!--android:layout_width="@dimen/_250sdp"-->
+    <!--android:layout_height="@dimen/_250sdp"-->
+    <!--android:layout_centerHorizontal="true"-->
+    <!--android:layout_centerVertical="true"-->
+    <!--android:src="@drawable/s_ic"-->
+    <!--android:visibility="gone" />-->
 
     <RelativeLayout
         android:id="@+id/laybg"
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp"></RelativeLayout>
+        android:layout_marginTop="10dp">
 
-    <ImageView
-        android:id="@+id/imageview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        <ImageView
+            android:id="@+id/iv_main"
+            android:layout_width="@dimen/_250sdp"
+            android:layout_height="@dimen/_250sdp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/s_ic"
+            android:visibility="gone" />
 
-        android:layout_centerHorizontal="true" />
+        <ImageView
+            android:id="@+id/imageview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imageview"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="7dp"
-        android:text=" Select from Gallery"
-        android:visibility="gone" />
+            android:layout_centerHorizontal="true" />
 
-    <Button
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageview"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="7dp"
+            android:text=" Select from Gallery"
+            android:visibility="gone" />
 
-        android:id="@+id/button2"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/button1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="7dp"
-        android:text=" Open color picker"
-        android:visibility="gone" />
+        <Button
 
-    <RelativeLayout
-        android:id="@+id/seekbatlayout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone">
+            android:id="@+id/button2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button1"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="7dp"
+            android:text=" Open color picker"
+            android:visibility="gone" />
 
-        <SeekBar
-            android:id="@+id/sb_value"
+        <RelativeLayout
+            android:id="@+id/seekbatlayout"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_40sdp"
             android:layout_alignParentBottom="true"
-            android:max="255"
-            android:maxHeight="@dimen/_80sdp"
-            android:minHeight="@dimen/_80sdp"
-            android:progress="100" />
+            android:visibility="gone">
+
+            <SeekBar
+                android:id="@+id/sb_value"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_alignParentBottom="true"
+                android:max="255"
+                android:maxHeight="@dimen/_80sdp"
+                android:minHeight="@dimen/_80sdp"
+                android:progress="100" />
+        </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>

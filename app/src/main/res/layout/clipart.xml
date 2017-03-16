@@ -53,7 +53,7 @@
         android:adjustViewBounds="true"
         android:background="@android:color/transparent"
         android:scaleType="fitCenter"
-        android:src="@drawable/close"
+        android:src="@drawable/settings"
         android:visibility="gone" />
 
     <LinearLayout
@@ -62,7 +62,7 @@
         android:layout_height="80dp"
         android:layout_below="@+id/del"
         android:background="#27002b"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/horizontal_recycler_view"

@@ -244,12 +244,14 @@ public class MainCanvas extends AppCompatActivity {
                 break;
 
             case R.id.save:
+                ClipArt.llVertical.setVisibility(View.INVISIBLE);
                 new AlertDialog.Builder(context)
                         .setTitle("Save Post")
                         .setMessage("Are you sure you want to save the current post")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 disableall();
+
                                 sb_value.setVisibility(View.GONE);
                                 Bitmap snap = loadBitmapFromView(relativeLayout);
                                 createImage(snap);
@@ -611,7 +613,9 @@ public class MainCanvas extends AppCompatActivity {
             }
 
         }
+//        ClipArt.llVertical.setVisibility(View.INVISIBLE);
         sblayout.setVisibility(View.INVISIBLE);
+
 
     }
 

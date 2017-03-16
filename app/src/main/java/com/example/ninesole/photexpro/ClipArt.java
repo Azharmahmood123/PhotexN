@@ -9,6 +9,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -32,6 +33,7 @@ public class ClipArt extends RelativeLayout {
     public static ImageButton btnscl;
     public static ImageView image;
     public static ImageView imgring;
+    public static LinearLayout llVertical;
     public boolean angelchange = false;
     public boolean angelhback = false;
     public LayoutInflater mInflater;
@@ -64,6 +66,7 @@ public class ClipArt extends RelativeLayout {
     Bitmap shadowBitmap;
     float startDegree;
     String[] v;
+    int ii = 0;
     private List<Data> data;
 
     public ClipArt(Context paramContext) {
@@ -83,6 +86,7 @@ public class ClipArt extends RelativeLayout {
         btnrot = ((ImageButton) findViewById(R.id.rotate));
         btnscl = ((ImageButton) findViewById(R.id.sacle));
         imgring = ((ImageView) findViewById(R.id.image));
+        ln1 = (LinearLayout) findViewById(R.id.ln1);
 
         // imageUri = ("assets://Cliparts/" + paramArrayOfString[paramInt1]);
         layoutParams = new LayoutParams(250, 250);
@@ -304,6 +308,8 @@ public class ClipArt extends RelativeLayout {
         btnrot.setVisibility(View.INVISIBLE);
         btnscl.setVisibility(View.INVISIBLE);
         imgring.setVisibility(View.INVISIBLE);
+        ln1.setVisibility(View.INVISIBLE);
+
     }
 
     public ImageView getImageView() {
@@ -351,6 +357,7 @@ public class ClipArt extends RelativeLayout {
         btnrot.setVisibility(View.VISIBLE);
         btnscl.setVisibility(View.VISIBLE);
         imgring.setVisibility(View.VISIBLE);
+
     }
 
     public interface DoubleTapListener {
@@ -361,6 +368,8 @@ public class ClipArt extends RelativeLayout {
 
 
         List<Data> horizontalList = Collections.emptyList();
+        ArrayList<Integer> idsList = new ArrayList<Integer>();
+
         Context context;
 
 
@@ -372,14 +381,21 @@ public class ClipArt extends RelativeLayout {
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.vertical_menu, parent, false);
+            llVertical = (LinearLayout) itemView.findViewById(R.id.ll_vertical);
 
             return new MyViewHolder(itemView);
         }
 
         @Override
         public void onBindViewHolder(final MyViewHolder holder, final int position) {
+            idsList.add(R.drawable.close);
+            idsList.add(R.drawable.v_flip);
+            idsList.add(R.drawable.h_flip);
+            idsList.add(R.drawable.rotate);
+            idsList.add(R.drawable.dim);
 
-            holder.imageView.setImageResource(horizontalList.get(position).imageId);
+            idsList.add(R.drawable.del);
+            holder.imageView.setImageResource(idsList.get(position));
             holder.txtview.setText(horizontalList.get(position).txt);
 
             holder.imageView.setOnClickListener(new OnClickListener() {
@@ -391,10 +407,49 @@ public class ClipArt extends RelativeLayout {
                         disableAll();
                         ln1.setVisibility(View.GONE);
                     } else if (position == 1) {
-                        image.setRotation(image.getRotation() - 50);
+                        Log.i("Flip", "Flip");
+                        image.buildDrawingCache();
+                        Bitmap bmap = image.getDrawingCache();
+                        Bitmap bOutput;
+                        Matrix matrix = new Matrix();
+//Clicks
+                        if (ii == 0) {
+                            ii = 1;
+                            matrix.preScale(-1.0f, 1.0f);
+                        } else {
+                            ii = 0;
+                            matrix.preScale(1.0f, 1.0f);
+                        }
+
+                        bOutput = Bitmap.createBitmap(bmap, 0, 0, bmap.getWidth(), bmap.getHeight(), matrix, true);
+
+                        image.setImageBitmap(bOutput);
+                        image.setRotation(image.getRotation() + 0);
                     } else if (position == 2) {
-                        //  image.setRotation((float) 180.0);
-                        image.setRotation(image.getRotation() + 180);
+
+
+                        /////
+                        image.buildDrawingCache();
+                        Bitmap bmap = image.getDrawingCache();
+                        Bitmap bOutput;
+                        Matrix matrix = new Matrix();
+//Clicks
+                        if (ii == 0) {
+                            ii = 1;
+                            matrix.preScale(1.0f, -1.0f);
+                        } else {
+                            ii = 0;
+                            matrix.preScale(1.0f, 1.0f);
+                        }
+
+                        bOutput = Bitmap.createBitmap(bmap, 0, 0, bmap.getWidth(), bmap.getHeight(), matrix, true);
+
+                        image.setImageBitmap(bOutput);
+                        image.setRotation(image.getRotation() + 0);
+                    } else if (position == 3) {
+                        image.setRotation(image.getRotation() + 90);
+
+
                     } else if (position == 4) {
                         MainCanvas.sblayout.setVisibility(View.VISIBLE);
                         disableAll();
