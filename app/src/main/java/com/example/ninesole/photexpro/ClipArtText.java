@@ -3,10 +3,12 @@ package com.example.ninesole.photexpro;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
+import android.graphics.Typeface;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,10 +22,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class ClipArtText extends RelativeLayout {
     final static int FLIP_VERTICAL = 1;
@@ -38,6 +43,7 @@ public class ClipArtText extends RelativeLayout {
     public boolean angelhback = false;
     public LayoutInflater mInflater;
     public LinearLayout ln1;
+    public int DefaultColor;
     RecyclerView horizontal_recycler_view;
     HorizontalAdapter horizontalAdapter;
     int baseh;
@@ -292,15 +298,15 @@ public class ClipArtText extends RelativeLayout {
 
         List<Data> data = new ArrayList<>();
 
-        data.add(new Data(R.drawable.rotation, "Edit"));
-        data.add(new Data(R.drawable.rotation, "Color"));
-        data.add(new Data(R.drawable.rotation, "Font"));
-        data.add(new Data(R.drawable.rotation, "Size"));
-        data.add(new Data(R.drawable.rotation, "Rotate"));
-        data.add(new Data(R.drawable.rotation, "Space"));
-        data.add(new Data(R.drawable.rotation, "Style"));
-        data.add(new Data(R.drawable.rotation, "Align"));
-        data.add(new Data(R.drawable.rotation, "Delete"));
+        data.add(new Data(R.drawable.edit, "Edit"));
+        data.add(new Data(R.drawable.color, "Color"));
+        data.add(new Data(R.drawable.font, "Font"));
+        data.add(new Data(R.drawable.size, "Size"));
+        data.add(new Data(R.drawable.rotate2, "Rotate"));
+        data.add(new Data(R.drawable.gap, "Space"));
+        data.add(new Data(R.drawable.style, "Style"));
+        data.add(new Data(R.drawable.align, "Align"));
+        data.add(new Data(R.drawable.del, "Delete"));
 
 
         return data;
@@ -364,6 +370,33 @@ public class ClipArtText extends RelativeLayout {
 
     }
 
+    public void OpenColorPickerDialogText(boolean AlphaSupport) {
+
+        AmbilWarnaDialog ambilWarnaDialog = new AmbilWarnaDialog(getContext(), DefaultColor, AlphaSupport, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+            @Override
+            public void onOk(AmbilWarnaDialog ambilWarnaDialog, int color) {
+
+                DefaultColor = color;
+
+                ClipArtText.canvas_text.setTextColor(color);
+            }
+
+            @Override
+            public void onCancel(AmbilWarnaDialog ambilWarnaDialog) {
+
+                Toast.makeText(getContext(), "Color Picker Closed", Toast.LENGTH_SHORT).show();
+            }
+        });
+        ambilWarnaDialog.show();
+
+    }
+
+    public void setFont(Typeface typeface) {
+
+
+        ClipArtText.canvas_text.setTypeface(typeface);
+    }
+
     public interface DoubleTapListener {
         void onDoubleTap();
     }
@@ -411,62 +444,30 @@ public class ClipArtText extends RelativeLayout {
 
                 public void onClick(View v) {
                     String list = horizontalList.get(position).txt.toString();
-                    if (position == 0) {
-                        disableAll();
-                        ln1.setVisibility(View.GONE);
-                    } else if (position == 1) {
-                        Log.i("Flip", "Flip");
-                        canvas_text.buildDrawingCache();
-                        Bitmap bmap = canvas_text.getDrawingCache();
-                        Bitmap bOutput;
-                        Matrix matrix = new Matrix();
-//Clicks
-                        if (ii == 0) {
-                            ii = 1;
-                            matrix.preScale(-1.0f, 1.0f);
-                        } else {
-                            ii = 0;
-                            matrix.preScale(1.0f, 1.0f);
-                        }
+                    if (position == 0) { // edit
+                        Intent intent = new Intent(getContext(), WriteTextAct.class);
+                        context.startActivity(intent);
+                    } else if (position == 1) { // color
+                        OpenColorPickerDialogText(false);
 
-                        bOutput = Bitmap.createBitmap(bmap, 0, 0, bmap.getWidth(), bmap.getHeight(), matrix, true);
+                    } else if (position == 2) { // font
+//                        Typeface face = Typeface.createFromAsset(getContext().getAssets(),
+//                                "fonts/f1.ttf");
 
-//                        canvas_text.setText(bOutput);
-                        canvas_text.setRotation(canvas_text.getRotation() + 0);
-                    } else if (position == 2) {
+                    } else if (position == 3) { // size
+                        MainCanvas.sb_value_text.setVisibility(View.VISIBLE);
+                        MainCanvas.sblayoutText.setVisibility(View.VISIBLE);
 
-
-                        /////
-                        canvas_text.buildDrawingCache();
-                        Bitmap bmap = canvas_text.getDrawingCache();
-                        Bitmap bOutput;
-                        Matrix matrix = new Matrix();
-//Clicks
-                        if (ii == 0) {
-                            ii = 1;
-                            matrix.preScale(1.0f, -1.0f);
-                        } else {
-                            ii = 0;
-                            matrix.preScale(1.0f, 1.0f);
-                        }
-
-                        bOutput = Bitmap.createBitmap(bmap, 0, 0, bmap.getWidth(), bmap.getHeight(), matrix, true);
-
-
-                        canvas_text.setRotation(canvas_text.getRotation() + 0);
-                    } else if (position == 3) {
+                    } else if (position == 4) { // rotate
                         canvas_text.setRotation(canvas_text.getRotation() + 90);
+                    } else if (position == 5) { // gap
 
+                    } else if (position == 6) { // style
 
-                    } else if (position == 4) {
-                        MainCanvas.sblayout.setVisibility(View.VISIBLE);
-                        disableAll();
-                        ln1.setVisibility(View.GONE);
-                    } else if (position == 5) {
-                        canvas_text.setVisibility(View.INVISIBLE);
-                        MainCanvas.sblayout.setVisibility(View.INVISIBLE);
-                        disableAll();
-                        ln1.setVisibility(View.GONE);
+                    } else if (position == 7) { // align
+
+                    } else if (position == 8) { // del
+
                     }
                 }
 

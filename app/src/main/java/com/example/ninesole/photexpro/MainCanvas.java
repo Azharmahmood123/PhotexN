@@ -56,8 +56,9 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 public class MainCanvas extends AppCompatActivity {
 
     public static final int RequestPermissionCode = 1;
-    public static RelativeLayout sblayout;
+    public static RelativeLayout sblayout, sblayoutText;
     public static String canvas_text = "";
+    public static SeekBar sb_value, rotateBar, sb_value_text;
     //keep track of camera capture intent
     public final int CATEGORY_ID = 0;
     final int CAMERA_CAPTURE = 1;
@@ -68,7 +69,6 @@ public class MainCanvas extends AppCompatActivity {
     public ImageView imageView;
     public ClipArt ca;
     public ClipArtText ca_text;
-    public SeekBar sb_value, rotateBar;
     public RelativeLayout relativeLayout;
     public Button button2;
     public ImageView imgbg;
@@ -135,9 +135,12 @@ public class MainCanvas extends AppCompatActivity {
 
         //////////////////////
         sb_value = (SeekBar) findViewById(R.id.sb_value);
+        sb_value_text = (SeekBar) findViewById(R.id.sb_value_text);
+
         layBg = (RelativeLayout) findViewById(R.id.laybg);
         imageView = (ImageView) findViewById(R.id.imageview);
         sblayout = (RelativeLayout) findViewById(R.id.seekbatlayout);
+        sblayoutText = (RelativeLayout) findViewById(R.id.seekbatlayouttext);
         relativeLayout = (RelativeLayout) findViewById(R.id.activity_main);
         button2 = (Button) findViewById(R.id.button2);
         //   buttonCamera = (Button)findViewById(R.id.button2);
@@ -188,6 +191,31 @@ public class MainCanvas extends AppCompatActivity {
                 // TODO Auto-generated method stub
                 disableall();
 //                Toast.makeText(context, "Selected Item Id : " + v.getId(), Toast.LENGTH_LONG).show();
+            }
+        });
+        sb_value_text.setProgress(255);
+        sb_value_text.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+//                ClipArt.image.setColorFilter(setBrightness(progress));
+//                canvas.drawColor(Color.argb(alpha, red, green, blue));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    ClipArtText.canvas_text.setTextSize(progress);
+
+                    Log.e("progress_text", progress + "");
+                }
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
         sb_value.setProgress(255);
@@ -651,6 +679,7 @@ public class MainCanvas extends AppCompatActivity {
         ambilWarnaDialog.show();
 
     }
+
 
     //Calling Dialog
     protected Dialog onCreateDialog(int id) {

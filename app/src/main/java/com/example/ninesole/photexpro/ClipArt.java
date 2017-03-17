@@ -293,11 +293,11 @@ public class ClipArt extends RelativeLayout {
         List<Data> data = new ArrayList<>();
 
         data.add(new Data(R.drawable.rotation, "Back"));
-        data.add(new Data(R.drawable.rotation, "V flip"));
-        data.add(new Data(R.drawable.rotation, "H flip"));
-        data.add(new Data(R.drawable.rotation, "Rotate"));
-        data.add(new Data(R.drawable.rotation, "Dim"));
-        data.add(new Data(R.drawable.rotation, "Delete"));
+        data.add(new Data(R.drawable.v_flip, "V flip"));
+        data.add(new Data(R.drawable.h_flip, "H flip"));
+        data.add(new Data(R.drawable.rotate, "Rotate"));
+        data.add(new Data(R.drawable.dim, "Dim"));
+        data.add(new Data(R.drawable.del, "Delete"));
 
 
         return data;
