@@ -25,13 +25,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ClipArt extends RelativeLayout {
+public class ClipArtText extends RelativeLayout {
     final static int FLIP_VERTICAL = 1;
     final static int FLIP_HORIZONTAL = 2;
     public static ImageButton btndel;
     public static ImageButton btnrot;
     public static ImageButton btnscl;
-    public static ImageView image;
+    public static TextView canvas_text;
     public static ImageView imgring;
     public static LinearLayout llVertical;
     public boolean angelchange = false;
@@ -69,7 +69,7 @@ public class ClipArt extends RelativeLayout {
     int ii = 0;
     private List<Data> data;
 
-    public ClipArt(Context paramContext) {
+    public ClipArtText(Context paramContext) {
         super(paramContext);
         cntx = paramContext;
         layGroup = this;
@@ -81,7 +81,7 @@ public class ClipArt extends RelativeLayout {
         // .v = paramArrayOfString
         // this.op = paramDisplayImageOptions;
         mInflater = ((LayoutInflater) paramContext.getSystemService("layout_inflater"));
-        mInflater.inflate(R.layout.clipart, this, true);
+        mInflater.inflate(R.layout.clipart_text, this, true);
         btndel = ((ImageButton) findViewById(R.id.del));
         btnrot = ((ImageButton) findViewById(R.id.rotate));
         btnscl = ((ImageButton) findViewById(R.id.sacle));
@@ -91,7 +91,7 @@ public class ClipArt extends RelativeLayout {
         // imageUri = ("assets://Cliparts/" + paramArrayOfString[paramInt1]);
         layoutParams = new LayoutParams(250, 250);
         layGroup.setLayoutParams(layoutParams);
-        image = ((ImageView) findViewById(R.id.clipart));
+        canvas_text = (TextView) findViewById(R.id.canvas_text);
 
         horizontal_recycler_view = (RecyclerView) findViewById(R.id.horizontal_recycler_view);
         ln1 = (LinearLayout) findViewById(R.id.ln1);
@@ -109,9 +109,9 @@ public class ClipArt extends RelativeLayout {
         //   image.setImageResource(R.drawable.ic_launcher);
         // ImageLoader.getInstance().displayImage(this.imageUri, this.image,
         // paramDisplayImageOptions);
-        image.setTag(Integer.valueOf(0));
-        image.setOnTouchListener(new OnTouchListener() {
-            final GestureDetector gestureDetector = new GestureDetector(ClipArt.this.cntx,
+        canvas_text.setTag(Integer.valueOf(1));
+        canvas_text.setOnTouchListener(new OnTouchListener() {
+            final GestureDetector gestureDetector = new GestureDetector(ClipArtText.this.cntx,
                     new GestureDetector.SimpleOnGestureListener() {
                         public boolean onDoubleTap(MotionEvent paramAnonymous2MotionEvent) {
                             return false;
@@ -119,11 +119,11 @@ public class ClipArt extends RelativeLayout {
                     });
 
             public boolean onTouch(View paramAnonymousView, MotionEvent event) {
-                ClipArt.this.visiball();
-                if (!ClipArt.this.freeze) {
+                ClipArtText.this.visiball();
+                if (!ClipArtText.this.freeze) {
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
-                            Log.i("touch","image");
+                            Log.i("touch", "text");
                             layGroup.invalidate();
                             gestureDetector.onTouchEvent(event);
                             ln1.setVisibility(View.GONE);
@@ -162,7 +162,7 @@ public class ClipArt extends RelativeLayout {
         btnscl.setOnTouchListener(new OnTouchListener() {
             @SuppressLint({"NewApi"})
             public boolean onTouch(View paramAnonymousView, MotionEvent event) {
-                if (!ClipArt.this.freeze) {
+                if (!ClipArtText.this.freeze) {
                     ln1.setVisibility(View.GONE);
                     int j = (int) event.getRawX();
                     int i = (int) event.getRawY();
@@ -170,11 +170,11 @@ public class ClipArt extends RelativeLayout {
                     switch (event.getAction()) {
 
                         case MotionEvent.ACTION_DOWN:
-                            ClipArt.this.layGroup.invalidate();
-                            ClipArt.this.basex = j;
-                            ClipArt.this.basey = i;
-                            ClipArt.this.basew = ClipArt.this.layGroup.getWidth();
-                            ClipArt.this.baseh = ClipArt.this.layGroup.getHeight();
+                            ClipArtText.this.layGroup.invalidate();
+                            ClipArtText.this.basex = j;
+                            ClipArtText.this.basey = i;
+                            ClipArtText.this.basew = ClipArtText.this.layGroup.getWidth();
+                            ClipArtText.this.baseh = ClipArtText.this.layGroup.getHeight();
                             int[] loaction = new int[2];
                             layGroup.getLocationOnScreen(loaction);
                             margl = layoutParams.leftMargin;
@@ -182,45 +182,45 @@ public class ClipArt extends RelativeLayout {
                             break;
                         case MotionEvent.ACTION_MOVE:
 
-                            float f2 = (float) Math.toDegrees(Math.atan2(i - ClipArt.this.basey, j - ClipArt.this.basex));
+                            float f2 = (float) Math.toDegrees(Math.atan2(i - ClipArtText.this.basey, j - ClipArtText.this.basex));
                             float f1 = f2;
                             if (f2 < 0.0F) {
                                 f1 = f2 + 360.0F;
                             }
-                            j -= ClipArt.this.basex;
-                            int k = i - ClipArt.this.basey;
+                            j -= ClipArtText.this.basex;
+                            int k = i - ClipArtText.this.basey;
                             i = (int) (Math.sqrt(j * j + k * k) * Math.cos(Math.toRadians(f1
-                                    - ClipArt.this.layGroup.getRotation())));
+                                    - ClipArtText.this.layGroup.getRotation())));
                             j = (int) (Math.sqrt(i * i + k * k) * Math.sin(Math.toRadians(f1
-                                    - ClipArt.this.layGroup.getRotation())));
-                            k = i * 2 + ClipArt.this.basew;
-                            int m = j * 2 + ClipArt.this.baseh;
+                                    - ClipArtText.this.layGroup.getRotation())));
+                            k = i * 2 + ClipArtText.this.basew;
+                            int m = j * 2 + ClipArtText.this.baseh;
                             if (k > 150) {
                                 layoutParams.width = k;
-                                layoutParams.leftMargin = (ClipArt.this.margl - i);
+                                layoutParams.leftMargin = (ClipArtText.this.margl - i);
                             }
                             if (m > 150) {
                                 layoutParams.height = m;
-                                layoutParams.topMargin = (ClipArt.this.margt - j);
+                                layoutParams.topMargin = (ClipArtText.this.margt - j);
                             }
-                            ClipArt.this.layGroup.setLayoutParams(layoutParams);
-                            ClipArt.this.layGroup.performLongClick();
+                            ClipArtText.this.layGroup.setLayoutParams(layoutParams);
+                            ClipArtText.this.layGroup.performLongClick();
                             break;
                     }
                     return true;
 
                 }
-                return ClipArt.this.freeze;
+                return ClipArtText.this.freeze;
             }
         });
 
         btnrot.setOnTouchListener(new OnTouchListener() {
             @SuppressLint({"NewApi"})
             public boolean onTouch(View paramAnonymousView, MotionEvent event) {
-                if (!ClipArt.this.freeze) {
+                if (!ClipArtText.this.freeze) {
                     ln1.setVisibility(View.GONE);
-                    layoutParams = (LayoutParams) ClipArt.this.layGroup.getLayoutParams();
-                    ClipArt.this.layBg = ((RelativeLayout) ClipArt.this.getParent());
+                    layoutParams = (LayoutParams) ClipArtText.this.layGroup.getLayoutParams();
+                    ClipArtText.this.layBg = ((RelativeLayout) ClipArtText.this.getParent());
                     int[] arrayOfInt = new int[2];
                     layBg.getLocationOnScreen(arrayOfInt);
                     int i = (int) event.getRawX() - arrayOfInt[0];
@@ -228,30 +228,30 @@ public class ClipArt extends RelativeLayout {
                     switch (event.getAction()) {
 
                         case MotionEvent.ACTION_DOWN:
-                            ClipArt.this.layGroup.invalidate();
-                            ClipArt.this.startDegree = layGroup.getRotation();
-                            ClipArt.this.pivx = (layoutParams.leftMargin + ClipArt.this.getWidth() / 2);
-                            ClipArt.this.pivy = (layoutParams.topMargin + ClipArt.this.getHeight() / 2);
-                            ClipArt.this.basex = (i - ClipArt.this.pivx);
-                            ClipArt.this.basey = (ClipArt.this.pivy - j);
+                            ClipArtText.this.layGroup.invalidate();
+                            ClipArtText.this.startDegree = layGroup.getRotation();
+                            ClipArtText.this.pivx = (layoutParams.leftMargin + ClipArtText.this.getWidth() / 2);
+                            ClipArtText.this.pivy = (layoutParams.topMargin + ClipArtText.this.getHeight() / 2);
+                            ClipArtText.this.basex = (i - ClipArtText.this.pivx);
+                            ClipArtText.this.basey = (ClipArtText.this.pivy - j);
                             break;
 
                         case MotionEvent.ACTION_MOVE:
-                            int k = ClipArt.this.pivx;
-                            int m = ClipArt.this.pivy;
-                            j = (int) (Math.toDegrees(Math.atan2(ClipArt.this.basey, ClipArt.this.basex)) - Math
+                            int k = ClipArtText.this.pivx;
+                            int m = ClipArtText.this.pivy;
+                            j = (int) (Math.toDegrees(Math.atan2(ClipArtText.this.basey, ClipArtText.this.basex)) - Math
                                     .toDegrees(Math.atan2(m - j, i - k)));
                             i = j;
                             if (j < 0) {
                                 i = j + 360;
                             }
-                            ClipArt.this.layGroup.setRotation((ClipArt.this.startDegree + i) % 360.0F);
+                            ClipArtText.this.layGroup.setRotation((ClipArtText.this.startDegree + i) % 360.0F);
                             break;
                     }
 
                     return true;
                 }
-                return ClipArt.this.freeze;
+                return ClipArtText.this.freeze;
             }
         });
         btndel.setOnClickListener(new OnClickListener() {
@@ -292,11 +292,14 @@ public class ClipArt extends RelativeLayout {
 
         List<Data> data = new ArrayList<>();
 
-        data.add(new Data(R.drawable.rotation, "Back"));
-        data.add(new Data(R.drawable.rotation, "V flip"));
-        data.add(new Data(R.drawable.rotation, "H flip"));
+        data.add(new Data(R.drawable.rotation, "Edit"));
+        data.add(new Data(R.drawable.rotation, "Color"));
+        data.add(new Data(R.drawable.rotation, "Font"));
+        data.add(new Data(R.drawable.rotation, "Size"));
         data.add(new Data(R.drawable.rotation, "Rotate"));
-        data.add(new Data(R.drawable.rotation, "Dim"));
+        data.add(new Data(R.drawable.rotation, "Space"));
+        data.add(new Data(R.drawable.rotation, "Style"));
+        data.add(new Data(R.drawable.rotation, "Align"));
         data.add(new Data(R.drawable.rotation, "Delete"));
 
 
@@ -313,12 +316,12 @@ public class ClipArt extends RelativeLayout {
 
     }
 
-    public ImageView getImageView() {
-        return image;
+    public TextView getImageView() {
+        return canvas_text;
     }
 
     public float getOpacity() {
-        return image.getAlpha();
+        return canvas_text.getAlpha();
     }
 
     public void resetImage() {
@@ -327,12 +330,12 @@ public class ClipArt extends RelativeLayout {
     }
 
     public void setColor(int paramInt) {
-        image.getDrawable().setColorFilter(null);
+//        canvas_text.setTextColor(null);
         ColorMatrixColorFilter localColorMatrixColorFilter = new ColorMatrixColorFilter(new float[]{0.33F, 0.33F,
                 0.33F, 0.0F, Color.red(paramInt), 0.33F, 0.33F, 0.33F, 0.0F, Color.green(paramInt), 0.33F, 0.33F,
                 0.33F, 0.0F, Color.blue(paramInt), 0.0F, 0.0F, 0.0F, 1.0F, 0.0F});
-        image.getDrawable().setColorFilter(localColorMatrixColorFilter);
-        image.setTag(Integer.valueOf(paramInt));
+//        canvas_text.getDrawable().setColorFilter(localColorMatrixColorFilter);
+        canvas_text.setTag(Integer.valueOf(paramInt));
         this.layGroup.performLongClick();
     }
 
@@ -341,7 +344,7 @@ public class ClipArt extends RelativeLayout {
     }
 
     public void setImageId() {
-        image.setId(this.layGroup.getId() + this.i);
+        canvas_text.setId(this.layGroup.getId() + this.i);
         this.i += 1;
     }
 
@@ -389,13 +392,17 @@ public class ClipArt extends RelativeLayout {
 
         @Override
         public void onBindViewHolder(final MyViewHolder holder, final int position) {
-            idsList.add(R.drawable.close);
-            idsList.add(R.drawable.v_flip);
-            idsList.add(R.drawable.h_flip);
-            idsList.add(R.drawable.rotate);
-            idsList.add(R.drawable.dim);
-
+            // Change items for text class
+            idsList.add(R.drawable.edit);
+            idsList.add(R.drawable.color);
+            idsList.add(R.drawable.font);
+            idsList.add(R.drawable.size);
+            idsList.add(R.drawable.rotate2);
+            idsList.add(R.drawable.gap);
+            idsList.add(R.drawable.style);
+            idsList.add(R.drawable.align);
             idsList.add(R.drawable.del);
+
             holder.imageView.setImageResource(idsList.get(position));
             holder.txtview.setText(horizontalList.get(position).txt);
 
@@ -409,8 +416,8 @@ public class ClipArt extends RelativeLayout {
                         ln1.setVisibility(View.GONE);
                     } else if (position == 1) {
                         Log.i("Flip", "Flip");
-                        image.buildDrawingCache();
-                        Bitmap bmap = image.getDrawingCache();
+                        canvas_text.buildDrawingCache();
+                        Bitmap bmap = canvas_text.getDrawingCache();
                         Bitmap bOutput;
                         Matrix matrix = new Matrix();
 //Clicks
@@ -424,14 +431,14 @@ public class ClipArt extends RelativeLayout {
 
                         bOutput = Bitmap.createBitmap(bmap, 0, 0, bmap.getWidth(), bmap.getHeight(), matrix, true);
 
-                        image.setImageBitmap(bOutput);
-                        image.setRotation(image.getRotation() + 0);
+//                        canvas_text.setText(bOutput);
+                        canvas_text.setRotation(canvas_text.getRotation() + 0);
                     } else if (position == 2) {
 
 
                         /////
-                        image.buildDrawingCache();
-                        Bitmap bmap = image.getDrawingCache();
+                        canvas_text.buildDrawingCache();
+                        Bitmap bmap = canvas_text.getDrawingCache();
                         Bitmap bOutput;
                         Matrix matrix = new Matrix();
 //Clicks
@@ -445,10 +452,10 @@ public class ClipArt extends RelativeLayout {
 
                         bOutput = Bitmap.createBitmap(bmap, 0, 0, bmap.getWidth(), bmap.getHeight(), matrix, true);
 
-                        image.setImageBitmap(bOutput);
-                        image.setRotation(image.getRotation() + 0);
+
+                        canvas_text.setRotation(canvas_text.getRotation() + 0);
                     } else if (position == 3) {
-                        image.setRotation(image.getRotation() + 90);
+                        canvas_text.setRotation(canvas_text.getRotation() + 90);
 
 
                     } else if (position == 4) {
@@ -456,7 +463,7 @@ public class ClipArt extends RelativeLayout {
                         disableAll();
                         ln1.setVisibility(View.GONE);
                     } else if (position == 5) {
-                        image.setVisibility(View.INVISIBLE);
+                        canvas_text.setVisibility(View.INVISIBLE);
                         MainCanvas.sblayout.setVisibility(View.INVISIBLE);
                         disableAll();
                         ln1.setVisibility(View.GONE);

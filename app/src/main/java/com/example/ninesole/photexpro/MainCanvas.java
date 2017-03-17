@@ -8,6 +8,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -56,6 +57,7 @@ public class MainCanvas extends AppCompatActivity {
 
     public static final int RequestPermissionCode = 1;
     public static RelativeLayout sblayout;
+    public static String canvas_text = "";
     //keep track of camera capture intent
     public final int CATEGORY_ID = 0;
     final int CAMERA_CAPTURE = 1;
@@ -65,6 +67,7 @@ public class MainCanvas extends AppCompatActivity {
     public Bitmap bitmap;
     public ImageView imageView;
     public ClipArt ca;
+    public ClipArtText ca_text;
     public SeekBar sb_value, rotateBar;
     public RelativeLayout relativeLayout;
     public Button button2;
@@ -85,6 +88,9 @@ public class MainCanvas extends AppCompatActivity {
     int width, height;
     Dialog dialog;
     boolean bg = false;
+    int add_text = 0;
+    SharedPreferences pref;
+    SharedPreferences.Editor ed;
     //captured picture uri
     private Uri picUri;
 
@@ -108,6 +114,10 @@ public class MainCanvas extends AppCompatActivity {
         v.layout(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
         v.draw(c);
         return b;
+    }
+
+    public static void TextSet(String txt) {
+        canvas_text = txt;
     }
 
     /////
@@ -134,6 +144,7 @@ public class MainCanvas extends AppCompatActivity {
         buttonGallery = (Button) findViewById(R.id.button1);
         EnableRuntimePermission();
         DefaultColor = ContextCompat.getColor(context, R.color.abc_hint_foreground_material_light);
+
         /////////////////////
     }
 
@@ -233,6 +244,8 @@ public class MainCanvas extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.keyboard:
                 Toast.makeText(context, "Open KeyBoard", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(context, WriteTextAct.class));
+//                finish();
                 break;
             case R.id.sticker:
                 Toast.makeText(context, "Sticker Dialog", Toast.LENGTH_SHORT).show();
@@ -375,7 +388,6 @@ public class MainCanvas extends AppCompatActivity {
 
     }
 
-
     public void backgroundDialog() {
         // custom dialog
         final Dialog dialog = new Dialog(context, R.style.dialog_animate);
@@ -462,6 +474,48 @@ public class MainCanvas extends AppCompatActivity {
         return Uri.parse(path);
     }
 
+//    private boolean performCropImage(Uri mFinalImageUri) {
+//        try {
+//            if (mFinalImageUri != null) {
+//                //call the standard crop action intent (the user device may not support it)
+//                Intent cropIntent = new Intent("com.android.camera.action.CROP");
+//                //indicate image type and Uri
+//                cropIntent.setDataAndType(mFinalImageUri, "image/*");
+//                //set crop properties
+//                cropIntent.putExtra("crop", "true");
+//                //indicate aspect of desired crop
+//                cropIntent.putExtra("aspectX", 1);
+//                cropIntent.putExtra("aspectY", 1);
+//                cropIntent.putExtra("scale", true);
+//                //indicate output X and Y
+//                cropIntent.putExtra("outputX", 500);
+//                cropIntent.putExtra("outputY", 500);
+//                //retrieve data on return
+//                cropIntent.putExtra("return-data", false);
+//
+//                File f = createNewFile("CROP_");
+//                try {
+//                    f.createNewFile();
+//                } catch (IOException ex) {
+//                    Log.e("io", ex.getMessage());
+//                }
+//
+//                Uri mCropImagedUri = Uri.fromFile(f);
+//                cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCropImagedUri);
+//                //start the activity - we handle returning in onActivityResult
+//                startActivityForResult(cropIntent, PIC_CROP);
+//                return true;
+//            }
+//        } catch (ActivityNotFoundException anfe) {
+//            //display an error message
+//            String errorMessage = "Whoops - your device doesn't support the crop action!";
+//            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
+//            toast.show();
+//            return false;
+//        }
+//        return false;
+//    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
 //user is returning from capturing an image using the camera
@@ -512,48 +566,6 @@ public class MainCanvas extends AppCompatActivity {
             }
         }
     }
-
-//    private boolean performCropImage(Uri mFinalImageUri) {
-//        try {
-//            if (mFinalImageUri != null) {
-//                //call the standard crop action intent (the user device may not support it)
-//                Intent cropIntent = new Intent("com.android.camera.action.CROP");
-//                //indicate image type and Uri
-//                cropIntent.setDataAndType(mFinalImageUri, "image/*");
-//                //set crop properties
-//                cropIntent.putExtra("crop", "true");
-//                //indicate aspect of desired crop
-//                cropIntent.putExtra("aspectX", 1);
-//                cropIntent.putExtra("aspectY", 1);
-//                cropIntent.putExtra("scale", true);
-//                //indicate output X and Y
-//                cropIntent.putExtra("outputX", 500);
-//                cropIntent.putExtra("outputY", 500);
-//                //retrieve data on return
-//                cropIntent.putExtra("return-data", false);
-//
-//                File f = createNewFile("CROP_");
-//                try {
-//                    f.createNewFile();
-//                } catch (IOException ex) {
-//                    Log.e("io", ex.getMessage());
-//                }
-//
-//                Uri mCropImagedUri = Uri.fromFile(f);
-//                cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCropImagedUri);
-//                //start the activity - we handle returning in onActivityResult
-//                startActivityForResult(cropIntent, PIC_CROP);
-//                return true;
-//            }
-//        } catch (ActivityNotFoundException anfe) {
-//            //display an error message
-//            String errorMessage = "Whoops - your device doesn't support the crop action!";
-//            Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
-//            toast.show();
-//            return false;
-//        }
-//        return false;
-//    }
 
     public void imageCropFunction(Uri uri) {
 
@@ -711,5 +723,47 @@ public class MainCanvas extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ed = getSharedPreferences("my", MODE_PRIVATE).edit();
+        ed.putString(WriteTextAct.MAIN_TEXT, null);
+        ed.commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        pref = getSharedPreferences("my", MODE_PRIVATE);
+        Intent c_text;
+        c_text = getIntent();
+//        canvas_text = c_text.getStringExtra(WriteTextAct.MAIN_TEXT);
+        canvas_text = pref.getString(WriteTextAct.MAIN_TEXT, null);
+        add_text = c_text.getIntExtra("add_text", 0);
+        if (canvas_text != null) {
+            if (canvas_text.length() > 0) {
+                ca_text = new ClipArtText(context);
+                layBg.addView(ca_text);
+                ca_text.setId(count++);
+                ca_text.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        // TODO Auto-generated method stub
+                        disableall();
+//                Toast.makeText(context, "Selected Item Id : " + v.getId(), Toast.LENGTH_LONG).show();
+                    }
+                });
+                ClipArtText.imgring.setVisibility(View.VISIBLE);
+                ClipArtText.btndel.setVisibility(View.VISIBLE);
+                ClipArtText.btnrot.setVisibility(View.VISIBLE);
+                ClipArtText.btnscl.setVisibility(View.VISIBLE);
+                ClipArtText.canvas_text.setVisibility(View.VISIBLE);
+                ClipArtText.canvas_text.setText(canvas_text);
+                Log.i("canvastext", canvas_text);
+            }
+        }
     }
 }
