@@ -2,6 +2,8 @@ package com.example.ninesole.photexpro;
 
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,9 +19,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import adapters.FontsListAdapter;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class ClipArtText extends RelativeLayout {
@@ -73,6 +78,9 @@ public class ClipArtText extends RelativeLayout {
     float startDegree;
     String[] v;
     int ii = 0;
+    Dialog dialog;
+    int position;
+    Typeface face;
     private List<Data> data;
 
     public ClipArtText(Context paramContext) {
@@ -319,6 +327,9 @@ public class ClipArtText extends RelativeLayout {
         btnscl.setVisibility(View.INVISIBLE);
         imgring.setVisibility(View.INVISIBLE);
         ln1.setVisibility(View.INVISIBLE);
+        MainCanvas.seekBarX.setVisibility(View.GONE);
+        MainCanvas.seekBar.setVisibility(View.GONE);
+        MainCanvas.llStyles.setVisibility(View.GONE);
 
     }
 
@@ -397,6 +408,73 @@ public class ClipArtText extends RelativeLayout {
         ClipArtText.canvas_text.setTypeface(typeface);
     }
 
+    //Calling Dialog
+    public void FontsDialog() {
+
+
+        AlertDialog.Builder builder;
+        Context mContext = getContext();
+        LayoutInflater inflater = ((LayoutInflater) mContext.getSystemService("layout_inflater"));
+        View layout = inflater.inflate(R.layout.backgrounds, (ViewGroup) findViewById(R.id.layout_root_dialog));
+
+        ListView lvFonts = (ListView) layout.findViewById(R.id.lv_fonts);
+        final TextView tv_display = (TextView) layout.findViewById(R.id.tv_display);
+        FontsListAdapter fl = new FontsListAdapter(mContext);
+        lvFonts.setAdapter(fl);
+
+        lvFonts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View arg1,
+                                    int pos, long arg3) {
+
+                position = pos;
+                if (pos == 0) {
+                    face = Typeface.createFromAsset(getContext().getAssets(),
+                            "font1.ttf");
+                    tv_display.setTypeface(face);
+                } else if (pos == 1) {
+                    face = Typeface.createFromAsset(getContext().getAssets(),
+                            "font2.ttf");
+                    tv_display.setTypeface(face);
+                } else if (pos == 2) {
+                    face = Typeface.createFromAsset(getContext().getAssets(),
+                            "font3.ttf");
+                    tv_display.setTypeface(face);
+                } else if (pos == 3) {
+                    face = Typeface.createFromAsset(getContext().getAssets(),
+                            "font4.ttf");
+                    tv_display.setTypeface(face);
+                } else if (pos == 4) {
+                    face = Typeface.createFromAsset(getContext().getAssets(),
+                            "font5.ttf");
+                    tv_display.setTypeface(face);
+                } else if (pos == 5) {
+                    face = Typeface.createFromAsset(getContext().getAssets(),
+                            "font6.ttf");
+                    tv_display.setTypeface(face);
+                }
+
+            }
+        });
+        ImageView tick = (ImageView) layout.findViewById(R.id.close);
+
+        tick.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if ((dialog.isShowing())) {
+                    ClipArtText.canvas_text.setTypeface(face);
+                }
+
+                dialog.dismiss();
+            }
+        });
+
+        builder = new AlertDialog.Builder(mContext);
+
+        builder.setView(layout);
+        dialog = builder.create();
+
+    }
+
     public interface DoubleTapListener {
         void onDoubleTap();
     }
@@ -454,15 +532,22 @@ public class ClipArtText extends RelativeLayout {
 //                        Typeface face = Typeface.createFromAsset(getContext().getAssets(),
 //                                "fonts/f1.ttf");
 
+                        FontsDialog();
+
                     } else if (position == 3) { // size
+                        disableAll();
                         MainCanvas.sb_value_text.setVisibility(View.VISIBLE);
                         MainCanvas.sblayoutText.setVisibility(View.VISIBLE);
 
                     } else if (position == 4) { // rotate
-                        canvas_text.setRotation(canvas_text.getRotation() + 90);
+                        disableAll();
+                        MainCanvas.seekBarX.setVisibility(View.VISIBLE);
+                        MainCanvas.seekBar.setVisibility(View.VISIBLE);
                     } else if (position == 5) { // gap
 
                     } else if (position == 6) { // style
+                        disableAll();
+                        MainCanvas.llStyles.setVisibility(View.VISIBLE);
 
                     } else if (position == 7) { // align
 
@@ -492,4 +577,6 @@ public class ClipArtText extends RelativeLayout {
             }
         }
     }
+
+
 }

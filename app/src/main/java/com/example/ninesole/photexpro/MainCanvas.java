@@ -14,6 +14,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -24,6 +25,8 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -59,8 +62,11 @@ public class MainCanvas extends AppCompatActivity {
     public static RelativeLayout sblayout, sblayoutText;
     public static String canvas_text = "";
     public static SeekBar sb_value, rotateBar, sb_value_text;
+    public static SeekBar seekBar, seekBarX;
+    public static LinearLayout llStyles;
     //keep track of camera capture intent
     public final int CATEGORY_ID = 0;
+    public final int Fonts = 4;
     final int CAMERA_CAPTURE = 1;
     //keep track of cropping intent
     final int PIC_CROP = 2;
@@ -91,6 +97,9 @@ public class MainCanvas extends AppCompatActivity {
     int add_text = 0;
     SharedPreferences pref;
     SharedPreferences.Editor ed;
+    Button bBold, bItalic, bUnderline, bItBold;
+    int i = 0;
+    boolean italic = false, bold = false, underline = false, italic_bold = false;
     //captured picture uri
     private Uri picUri;
 
@@ -148,10 +157,115 @@ public class MainCanvas extends AppCompatActivity {
         EnableRuntimePermission();
         DefaultColor = ContextCompat.getColor(context, R.color.abc_hint_foreground_material_light);
 
+        llStyles = (LinearLayout) findViewById(R.id.ll_styles);
+        bBold = (Button) findViewById(R.id.b_bold);
+        bItalic = (Button) findViewById(R.id.b_italic);
+        bUnderline = (Button) findViewById(R.id.b_underline);
+        bItBold = (Button) findViewById(R.id.b_it_bold);
+        seekBar = (SeekBar) findViewById(R.id.sb_value_y);
+        seekBar.setMax(360);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            public void onProgressChanged(SeekBar seekBar, int progress,
+                                          boolean fromUser) {
+                // prevent seeking on app creation
+                ClipArtText.canvas_text.setRotationY((float) progress);
+            }
+        });
+        seekBarX = (SeekBar) findViewById(R.id.sb_value_x);
+        seekBarX.setMax(360);
+        seekBarX.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            public void onProgressChanged(SeekBar seekBar, int progress,
+                                          boolean fromUser) {
+                // prevent seeking on app creation
+                ClipArtText.canvas_text.setRotationX((float) progress);
+            }
+        });
         /////////////////////
     }
 
     public void Actions() {
+
+        bBold.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (bold) {
+                    ClipArtText.canvas_text.setTypeface(null, Typeface.NORMAL);
+                    bold = false;
+                } else {
+                    ClipArtText.canvas_text.setTypeface(null, Typeface.NORMAL);
+                    ClipArtText.canvas_text.setTypeface(null, Typeface.BOLD);
+                    bold = true;
+                }
+
+//
+
+
+            }
+        });
+        bItalic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (italic) {
+                    ClipArtText.canvas_text.setTypeface(null, Typeface.NORMAL);
+                    italic = false;
+                } else {
+                    ClipArtText.canvas_text.setTypeface(null, Typeface.NORMAL);
+                    ClipArtText.canvas_text.setTypeface(null, Typeface.ITALIC);
+
+                    italic = true;
+                }
+
+            }
+        });
+        bUnderline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                canvas_text = ClipArtText.canvas_text.getText().toString();
+                if (underline) {
+                    ClipArtText.canvas_text.setText(canvas_text);
+                    underline = false;
+                } else {
+                    SpannableString content = new SpannableString(ClipArtText.canvas_text.getText());
+                    content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+
+                    ClipArtText.canvas_text.setText(content);
+
+//                    ClipArtText.canvas_text.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
+                    underline = true;
+                }
+
+            }
+        });
+        bItBold.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (italic_bold) {
+                    ClipArtText.canvas_text.setTypeface(null, Typeface.NORMAL);
+                    italic_bold = false;
+                } else {
+                    ClipArtText.canvas_text.setTypeface(null, Typeface.NORMAL);
+                    ClipArtText.canvas_text.setTypeface(null, Typeface.BOLD_ITALIC);
+                    italic_bold = true;
+                }
+
+
+            }
+        });
+
 
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -285,7 +399,7 @@ public class MainCanvas extends AppCompatActivity {
                 break;
 
             case R.id.save:
-                ClipArt.llVertical.setVisibility(View.INVISIBLE);
+                ClipArt.llVertical.setVisibility(View.GONE);
                 new AlertDialog.Builder(context)
                         .setTitle("Save Post")
                         .setMessage("Are you sure you want to save the current post")
@@ -654,7 +768,7 @@ public class MainCanvas extends AppCompatActivity {
 
         }
 //        ClipArt.llVertical.setVisibility(View.INVISIBLE);
-        sblayout.setVisibility(View.INVISIBLE);
+        sblayout.setVisibility(View.GONE);
 
 
     }

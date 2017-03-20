@@ -53,4 +53,6 @@ public class WriteTextAct extends AppCompatActivity {
         });
 
     }
+
+
 }
